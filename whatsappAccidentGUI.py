@@ -49,9 +49,6 @@ class AccidentResponseApp:
         self.timer_label = tk.Label(root, text=f"Respond within: {self.timer} seconds", font=("Arial", 14))
         self.timer_label.grid(row=5, column=1, pady=20)
 
-        # Placeholders for user info
-        self.info_labels = []
-
         # Start the countdown timer
         self.start_timer()
 
@@ -100,7 +97,6 @@ class AccidentResponseApp:
         self.get_geolocation(contact_name, contact_number, allergies)
 
     # Get geolocation using Google Maps Geolocation API and send WhatsApp message
-    # Get geolocation using Google Maps Geolocation API and send WhatsApp message
     def get_geolocation(self, contact_name, contact_number, allergies):
         try:
             # URL for the Google Geolocation API
@@ -137,34 +133,32 @@ class AccidentResponseApp:
             pywhatkit.sendwhatmsg(contact_number, full_message, time_hour, time_minute, 
                                   waiting_time_to_send, close_tab, waiting_time_to_close)
 
-            # Show user info in the same window after sending the message
+            # Show user info in a new window after sending the message
             self.show_user_info()
 
         except Exception as e:
             messagebox.showerror("Error", f"Unable to get geolocation or send WhatsApp message: {e}")
 
-    # Display user information in the same window
+    # Display user information in a new window
     def show_user_info(self):
-        # Clear any previous info labels
-        for label in self.info_labels:
-            label.destroy()
+        user_info_window = tk.Toplevel(self.root)
+        user_info_window.title("User Information")
 
-        # Display the user's details
-        name_label = tk.Label(self.root, text=f"Name: {self.name}", font=("Arial", 14))
-        name_label.grid(row=6, column=0, columnspan=2, pady=5)
-        self.info_labels.append(name_label)
+        # Display the user's details in the new window
+        name_label = tk.Label(user_info_window, text=f"Name: {self.name}", font=("Arial", 14))
+        name_label.pack(pady=10)
 
-        allergies_label = tk.Label(self.root, text=f"ALLERGIES: {self.allergy_info}", font=("Arial", 14))
-        allergies_label.grid(row=7, column=0, columnspan=2, pady=5)
-        self.info_labels.append(allergies_label)
+        allergies_label = tk.Label(user_info_window, text=f"ALLERGIES: {self.allergy_info}", font=("Arial", 14))
+        allergies_label.pack(pady=10)
 
-        contact_label = tk.Label(self.root, text=f"Emergency Contact: {self.name}", font=("Arial", 14))
-        contact_label.grid(row=8, column=0, columnspan=2, pady=5)
-        self.info_labels.append(contact_label)
+        contact_label = tk.Label(user_info_window, text=f"Emergency Contact: {self.name}", font=("Arial", 14))
+        contact_label.pack(pady=10)
 
-        phone_label = tk.Label(self.root, text=f"Emergency Number: {self.number}", font=("Arial", 14))
-        phone_label.grid(row=9, column=0, columnspan=2, pady=5)
-        self.info_labels.append(phone_label)
+        phone_label = tk.Label(user_info_window, text=f"Emergency Number: {self.number}", font=("Arial", 14))
+        phone_label.pack(pady=10)
+
+        close_button = tk.Button(user_info_window, text="Close", command=user_info_window.destroy)
+        close_button.pack(pady=20)
 
 if __name__ == "__main__":
     root = tk.Tk()
