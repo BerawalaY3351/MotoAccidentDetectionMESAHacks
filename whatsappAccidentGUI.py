@@ -16,7 +16,7 @@ class AccidentResponseApp:
     def __init__(self, root):
         self.root = root
         self.root.title("MotoCrashApp")
-        self.timer = 15  # Time to respond (15 seconds)
+        self.timer = 5  # Time to respond (5 seconds)
         self.response_received = False
 
         # Emergency contact details entry fields
@@ -72,8 +72,12 @@ class AccidentResponseApp:
             self.timer_label.config(text=f"Respond within: {self.timer} seconds")
             if self.response_received:
                 return
-        # If no response is received, send an alert
-        self.send_alert_to_responders()
+
+        # Timer reached 0, send alert automatically if no response is received
+        if not self.response_received:
+            # Ensure emergency details are collected when no response is given
+            self.get_emergency_details()
+            self.send_alert_to_responders()
 
     # If user clicks Yes
     def yes_response(self):
@@ -139,6 +143,12 @@ class AccidentResponseApp:
             # Send the message with automatic options
             pywhatkit.sendwhatmsg(contact_number, full_message, time_hour, time_minute, 
                                   waiting_time_to_send, close_tab, waiting_time_to_close)
+            
+            # # Add delay to ensure whatsapp web page is fully loaded
+            # time.sleep(15) # adjust value base on time it takes for page to load
+
+            # #simulate the press enter
+            # pyautogui.press('enter')
 
             # Show user info in a new window after sending the message
             self.show_user_info()
