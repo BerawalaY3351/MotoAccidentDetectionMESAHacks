@@ -27,10 +27,13 @@ GUI for User Input: Simple form to input the emergency contact name, phone numbe
 This version of MotoCrashApp is the first phase of the project. The current phase focuses on accident response through software by sending emergency WhatsApp messages and tracking user geolocation.
 
 ### Next Phase:
-- Hardware Integration: The development of the physical sensors and triggers will begin in the next phase. Specifically, we'll work on:
-    - USB Trigger System: Detect when the motorcycle disconnects or crashes through a USB system connected to the motorcycle.
-    - Sensor Integration: Implement sensors that can detect crash events and automatically trigger the software response.
+- **Hardware Integration**: The development of the physical sensors and triggers will begin in the next phase. Specifically, we'll work on:
+    - **USB Trigger System**: Detect when the motorcycle disconnects or crashes through a USB system connected to the motorcycle.
+    - **Sensor Integration**: Implement sensors that can detect crash events and automatically trigger the software response.
 These hardware integrations will extend the software capabilities of the current project, ensuring that emergency messages are sent automatically without requiring manual input.
+
+### Future Development:
+In future phases, we plan to expand the system to handle other accident situations beyond motorcycles. This includes developing an **offline GPS alerting system** that will allow emergency messages to be sent even when the device is not connected to the internet. This ensures location data can still be transmitted in critical situations where connectivity might be limited, enhancing safety across multiple types of vehicles and scenarios
 
 ### License
 This project is licensed under the MIT License - see the LICENSE file for details.
