@@ -1,5 +1,4 @@
 # Let's integrate the logic from WhatsApp.py into the existing accident response app
-
 import tkinter as tk
 from tkinter import messagebox
 import threading
@@ -11,34 +10,47 @@ import pyautogui
 import keyboard
 
 # Replace 'YOUR_GOOGLE_API_KEY' with your actual Google API key
-GOOGLE_API_KEY = "API_KEY"
-
-# Variables for WhatsApp integration
-phone_number = '+14082282128'  # Add the desired phone number
-message = 'Accident detected. Call ambulance to this location: '
+GOOGLE_API_KEY = "YOUR_GOOGLE_API_KEY"
 
 class AccidentResponseApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Accident Response Simulator")
-        self.timer = 15  # Time to respond (15 seconds)
+        self.root.title("MotoCrashApp")
+        self.timer = 30  # Time to respond (30 seconds)
         self.response_received = False
-        self.stop_timer = False  # Flag to stop timer thread
 
-        # Label asking the user if they are okay
-        self.label = tk.Label(root, text="Are you okay?", font=("Arial", 18))
-        self.label.pack(pady=20)
+        # Emergency contact details entry fields
+        appName = tk.Label(root, text="MotoCrashApp", font=("Courier 22 bold"))
+        appName.grid(row=0, column=1)
+
+        eName = tk.Label(root, text="Enter emergency contact name: ", font=("Courier 15 bold"))
+        eName.grid(row=1, column=0, pady=10)
+        self.emergency_name = tk.Entry(root)
+        self.emergency_name.grid(row=1, column=1)
+
+        eNum = tk.Label(root, text="Enter emergency contact number: ", font=("Courier 15 bold"))
+        eNum.grid(row=2, column=0, pady=10)
+        self.emergency_number = tk.Entry(root)
+        self.emergency_number.grid(row=2, column=1)
+
+        eTxt = tk.Label(root, text="What allergies do you have: ", font=("Courier 15 bold"))
+        eTxt.grid(row=3, column=0, pady=10)
+        self.allergies = tk.Entry(root)
+        self.allergies.grid(row=3, column=1)
 
         # Yes and No buttons for user response
         self.yes_button = tk.Button(root, text="Yes", command=self.yes_response, width=10)
-        self.yes_button.pack(side=tk.LEFT, padx=20)
+        self.yes_button.grid(row=4, column=0, pady=20)
 
         self.no_button = tk.Button(root, text="No", command=self.no_response, width=10)
-        self.no_button.pack(side=tk.RIGHT, padx=20)
+        self.no_button.grid(row=4, column=1, pady=20)
 
         # Timer label to show countdown
         self.timer_label = tk.Label(root, text=f"Respond within: {self.timer} seconds", font=("Arial", 14))
-        self.timer_label.pack(pady=20)
+        self.timer_label.grid(row=5, column=1, pady=20)
+
+        # Placeholders for user info
+        self.info_labels = []
 
         # Start the countdown timer
         self.start_timer()
@@ -68,15 +80,28 @@ class AccidentResponseApp:
     # If user clicks No
     def no_response(self):
         self.response_received = True
+        self.get_emergency_details()  # Get user input before sending alert
         self.send_alert_to_responders()
-        self.get_geolocation()
 
-    # Sends an alert (simulated SMS message or phone call to emergency responders)
+    # Collect emergency contact details
+    def get_emergency_details(self):
+        self.name = self.emergency_name.get()
+        self.number = self.emergency_number.get()
+        self.allergy_info = self.allergies.get()
+
+    # Sends an alert (simulated WhatsApp message to emergency contact)
     def send_alert_to_responders(self):
-        messagebox.showwarning("No Response", "Accident detected. Sending message to emergency responders!")
-    
+        # Collect user input
+        contact_name = self.name
+        contact_number = self.number
+        allergies = self.allergy_info
+
+        # Get geolocation and send WhatsApp message with additional details
+        self.get_geolocation(contact_name, contact_number, allergies)
+
     # Get geolocation using Google Maps Geolocation API and send WhatsApp message
-    def get_geolocation(self):
+    # Get geolocation using Google Maps Geolocation API and send WhatsApp message
+    def get_geolocation(self, contact_name, contact_number, allergies):
         try:
             # URL for the Google Geolocation API
             url = "https://www.googleapis.com/geolocation/v1/geolocate?key=" + GOOGLE_API_KEY
@@ -89,10 +114,12 @@ class AccidentResponseApp:
             latitude = location_data['location']['lat']
             longitude = location_data['location']['lng']
 
-            # Prepare the message with geolocation
-            full_message = f"{message} Latitude: {latitude}, Longitude: {longitude}"
+            # Prepare the WhatsApp message with geolocation and user details
+            full_message = (f"Accident detected. Emergency Contact: {contact_name}, "
+                            f"Phone: {contact_number}, Allergies: {allergies}. "
+                            f"Call ambulance to this location: Latitude: {latitude}, Longitude: {longitude}")
 
-            # WhatsApp integration: calculate the time for message sending
+            # Get current time for sending the message in the next minute
             now = datetime.datetime.now()
             time_hour = now.hour
             time_minute = now.minute + 1
@@ -100,22 +127,46 @@ class AccidentResponseApp:
             if time_minute == 60:
                 time_minute = 0
                 time_hour += 1
-                if time_hour == 24:
-                    time_hour = 0
 
-            # Send a WhatsApp message with the geolocation data
-            pywhatkit.sendwhatmsg(phone_number, full_message, time_hour, time_minute, 10, True, 2)
-            pyautogui.click(3024, 1964)  # Adjust coordinates for click
-            keyboard.press_and_release('enter')
+            # Parameters for WhatsApp auto send
+            waiting_time_to_send = 8  # Wait 8 seconds to send the message
+            close_tab = True  # Close the tab after sending
+            waiting_time_to_close = 2  # Wait 2 seconds before closing the tab
 
-            # Inform the user that the message has been sent
-            messagebox.showinfo("WhatsApp", "Geolocation sent via WhatsApp!")
+            # Send the message with automatic options
+            pywhatkit.sendwhatmsg(contact_number, full_message, time_hour, time_minute, 
+                                  waiting_time_to_send, close_tab, waiting_time_to_close)
+
+            # Show user info in the same window after sending the message
+            self.show_user_info()
 
         except Exception as e:
             messagebox.showerror("Error", f"Unable to get geolocation or send WhatsApp message: {e}")
+
+    # Display user information in the same window
+    def show_user_info(self):
+        # Clear any previous info labels
+        for label in self.info_labels:
+            label.destroy()
+
+        # Display the user's details
+        name_label = tk.Label(self.root, text=f"Name: {self.name}", font=("Arial", 14))
+        name_label.grid(row=6, column=0, columnspan=2, pady=5)
+        self.info_labels.append(name_label)
+
+        allergies_label = tk.Label(self.root, text=f"ALLERGIES: {self.allergy_info}", font=("Arial", 14))
+        allergies_label.grid(row=7, column=0, columnspan=2, pady=5)
+        self.info_labels.append(allergies_label)
+
+        contact_label = tk.Label(self.root, text=f"Emergency Contact: {self.name}", font=("Arial", 14))
+        contact_label.grid(row=8, column=0, columnspan=2, pady=5)
+        self.info_labels.append(contact_label)
+
+        phone_label = tk.Label(self.root, text=f"Emergency Number: {self.number}", font=("Arial", 14))
+        phone_label.grid(row=9, column=0, columnspan=2, pady=5)
+        self.info_labels.append(phone_label)
 
 if __name__ == "__main__":
     root = tk.Tk()
     app = AccidentResponseApp(root)
     root.mainloop()
-
