@@ -11,7 +11,7 @@ import pyautogui
 import keyboard
 
 # Replace 'YOUR_GOOGLE_API_KEY' with your actual Google API key
-GOOGLE_API_KEY = "AIzaSyD48OWXJDHBghssUfppGvtfrQPqtNrn_9Q"
+GOOGLE_API_KEY = "API_KEY"
 
 # Variables for WhatsApp integration
 phone_number = '+14082282128'  # Add the desired phone number
