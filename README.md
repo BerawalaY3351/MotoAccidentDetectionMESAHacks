@@ -22,3 +22,15 @@ GUI for User Input: Simple form to input the emergency contact name, phone numbe
 - Python 3.x installed on your system.
 - A Google Cloud API Key for accessing the Google Maps Geolocation API.
 - pip for managing Python packages.
+  
+### Roadmap: Next Phases
+This version of MotoCrashApp is the first phase of the project. The current phase focuses on accident response through software by sending emergency WhatsApp messages and tracking user geolocation.
+
+### Next Phase:
+- Hardware Integration: The development of the physical sensors and triggers will begin in the next phase. Specifically, we'll work on:
+    - USB Trigger System: Detect when the motorcycle disconnects or crashes through a USB system connected to the motorcycle.
+    - Sensor Integration: Implement sensors that can detect crash events and automatically trigger the software response.
+These hardware integrations will extend the software capabilities of the current project, ensuring that emergency messages are sent automatically without requiring manual input.
+
+### License
+This project is licensed under the MIT License - see the LICENSE file for details.
