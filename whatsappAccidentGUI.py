@@ -10,13 +10,13 @@ import pyautogui
 import keyboard
 
 # Replace 'YOUR_GOOGLE_API_KEY' with your actual Google API key
-GOOGLE_API_KEY = "YOUR_GOOGLE_API_KEY"
+GOOGLE_API_KEY = "API_KEY"
 
 class AccidentResponseApp:
     def __init__(self, root):
         self.root = root
         self.root.title("MotoCrashApp")
-        self.timer = 30  # Time to respond (30 seconds)
+        self.timer = 15  # Time to respond (15 seconds)
         self.response_received = False
 
         # Emergency contact details entry fields
@@ -38,18 +38,25 @@ class AccidentResponseApp:
         self.allergies = tk.Entry(root)
         self.allergies.grid(row=3, column=1)
 
-        # Yes and No buttons for user response
+        # Start button to start the timer
+        self.start_button = tk.Button(root, text="Start", command=self.start_process, width=10)
+        self.start_button.grid(row=4, column=1, pady=20)
+
+        # Yes and No buttons for user response (hidden initially)
         self.yes_button = tk.Button(root, text="Yes", command=self.yes_response, width=10)
-        self.yes_button.grid(row=4, column=0, pady=20)
-
         self.no_button = tk.Button(root, text="No", command=self.no_response, width=10)
-        self.no_button.grid(row=4, column=1, pady=20)
 
-        # Timer label to show countdown
+        # Timer label (hidden initially)
         self.timer_label = tk.Label(root, text=f"Respond within: {self.timer} seconds", font=("Arial", 14))
-        self.timer_label.grid(row=5, column=1, pady=20)
 
-        # Start the countdown timer
+    # Method triggered when the Start button is clicked
+    def start_process(self):
+        # Show Yes and No buttons after clicking Start
+        self.yes_button.grid(row=5, column=0, pady=20)
+        self.no_button.grid(row=5, column=1, pady=20)
+
+        # Show the timer label and start the countdown
+        self.timer_label.grid(row=6, column=1, pady=20)
         self.start_timer()
 
     # Method to start the timer
