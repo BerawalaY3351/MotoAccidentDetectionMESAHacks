@@ -1,4 +1,4 @@
-# MotoAccidentDetectionMESAHacks
+# Motorcycle Accident Detection Notification System MESA U Hacks
 
 ## MotoCrashApp
 ### Overview
